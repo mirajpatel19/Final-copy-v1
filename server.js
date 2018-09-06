@@ -31,6 +31,7 @@ app.get('/cheeseorderform', function (req, res, next) {
   var lastname = req.query.lastname;
   var employeenumber = req.query.employeenumber;
   var saledate = req.query.saledate;
+  var typeOfEmp = req.query.typeOfEmpm;
 
   var cheeseSaleDate = new Date(saledate);
   var day = cheeseSaleDate.getDate() + 1
@@ -223,15 +224,15 @@ app.get('/cheeseorderform', function (req, res, next) {
     // }
     console.log("Database connected!");
     //Checks if user exists into database.
-    client.query("SELECT distinct fname FROM users where fname=$1 and lname=$2 and empnum=$3", [firstname, lastname, employeenumber], function (err, result, fields) {
+    client.query("SELECT distinct fname FROM users where fname=$1 and lname=$2 and empnum=$3 and emptype=$4", [firstname, lastname, employeenumber, typeOfEmp], function (err, result, fields) {
       if (err) {
         throw err;
       }
       //Insert user bc it does not exists.
       if (result.rowCount == 0) {
         console.log("Not Match!");
-        client.query("INSERT INTO users(fname, lname, empnum) \
-          VALUES($1, $2, $3) RETURNING fname, lname, empnum", [firstname, lastname, employeenumber], function (err, resu) {
+        client.query("INSERT INTO users(fname, lname, empnum, emptype) \
+          VALUES($1, $2, $3, $4) RETURNING fname, lname, empnum, emptype", [firstname, lastname, employeenumber, typeOfEmp], function (err, resu) {
           if (err) {
             throw err
           }
@@ -246,7 +247,7 @@ app.get('/cheeseorderform', function (req, res, next) {
             } else {
               console.log('There are values inside MR.: ' + array[i].variety + ' ' + array[i].style + ' ' + array[i].size + ' ' + array[i].qty);
               //search for userid into user table and insert it into orders table.
-              client.query("SELECT id FROM users where fname=$1 and lname=$2 and empnum=$3", [firstname, lastname, employeenumber], function (err, result) {
+              client.query("SELECT id FROM users where fname=$1 and lname=$2 and empnum=$3 and emptype=$4", [firstname, lastname, employeenumber, typeOfEmp], function (err, result) {
                 if (err) {
                   throw err;
                 }
@@ -277,7 +278,7 @@ app.get('/cheeseorderform', function (req, res, next) {
           } else {
             console.log('There are values inside MR.: ' + array[i].variety + ' ' + array[i].style + ' ' + array[i].size + ' ' + array[i].qty);
             //search for userid into user table and insert it into orders table.
-            client.query("SELECT id FROM users where fname=$1 and lname=$2 and empnum=$3", [firstname, lastname, employeenumber], function (err, result) {
+            client.query("SELECT id FROM users where fname=$1 and lname=$2 and empnum=$3 and emptype=$4", [firstname, lastname, employeenumber, typeOfEmp], function (err, result) {
               if (err) {
                 throw err;
               }
@@ -400,7 +401,7 @@ app.get('/cheeseorderform', function (req, res, next) {
     to: mainEmail, // list of receivers
     subject: 'New Cheese Order Received - ' + cheeseSaleDate, // Subject line
     cc: email,
-    html: '<strong>First Name: </strong>' + firstname + '<br/><strong>Last Name: </strong>' + lastname + '<br/><strong>Employee Number: </strong>' + employeenumber + '<br/><strong>Cheese Sale Date: </strong>' + cheeseSaleDate + '<br/><br/>\
+    html: '<strong>First Name: </strong>' + firstname + '<br/><strong>Last Name: </strong>' + lastname + '<br/><strong>Employee Number: </strong>' + employeenumber + '<br/><strong>Cheese Sale Date: </strong>' + cheeseSaleDate + '<br/><strong>Employment Type: </strong>' + typeOfEmp + '<br/><br/>\
     <table style="text-align: center; border:2px solid black; width:400px">\
     <tr><th style="border-bottom:2px solid black;">Number</th><th style="border-bottom:2px solid black;">Variety</th><th style="border-bottom:2px solid black;">Style</th><th style="border-bottom:2px solid black;">Size</th><th style="border-bottom:2px solid black;">Qty</th><th style="border-bottom:2px solid black;">Pounds</th><th style="border-bottom:2px solid black;"></th></tr>\
     <tr><td style="border-bottom:1px solid black;">1</td><td style="border-bottom:1px solid black;">' + array[0].variety + '</td><td style="border-bottom:1px solid black;">' + array[0].style + '</td><td style="border-bottom:1px solid black;">' + array[0].size + '</td><td style="border-bottom:1px solid black;">' + array[0].qty + '</td><td style="border-bottom:1px solid black;">' + array[0].pounds + '</td><td style="border-bottom:1px solid black;"></td></tr>\
@@ -471,7 +472,7 @@ app.post('/payRoll', function (req, res) {
     // }
     console.log("Database connected for pay roll!");
 
-    client.query("select users.empnum, users.fname, users.lname, sum(orders.pounds) as totalpounds, sum(orders.price) as totalamount from users inner join orders on users.id = orders.userid where orders.saledate=$1 group by users.empnum, users.fname, users.lname;", [newDate], function (err, result, fields) {
+    client.query("select users.empnum, users.fname, users.lname, users.emptype, sum(orders.pounds) as totalpounds, sum(orders.price) as totalamount from users inner join orders on users.id = orders.userid where orders.saledate=$1 group by users.empnum, users.fname, users.lname, users.emptype;", [newDate], function (err, result, fields) {
       //select orders.userid, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.orderdate from users inner join orders on users.id = orders.userid where orders.saledate=$1
       console.log(result.rows);
       if (err) {
@@ -597,6 +598,7 @@ app.post('/deletePrice', function (req, res) {
   console.log(req.body);
   var removeId = req.body.id;
   var removeDateValues = req.body.saledate;
+  console.log("removeDateValues is: " + removeDateValues);
 
   //SQL DATABASE
   client.connect(function (err) {
@@ -604,7 +606,7 @@ app.post('/deletePrice', function (req, res) {
     //     throw err;
     //   }
     console.log("Database connected for deletePrice!");
-    client.query("delete from prices where id=$1", [removeId], function (err, result, fields) {
+    client.query("delete from prices where saledate=$1;", [removeDateValues], function (err, result, fields) {
       if (err) {
         throw err;
       }

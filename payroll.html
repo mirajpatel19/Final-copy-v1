@@ -46,9 +46,11 @@
         <th>
           <a id="heading" href="" ng-click="sortField = 'lname'; reverse = !reverse">Last Name</th>
         <th>
-          <a id="heading" href="" ng-click="sortField = 'pounds'; reverse = !reverse">Total Pounds</th>
+          <a id="heading" href="" ng-click="sortField = 'totalpounds'; reverse = !reverse">Total Pounds</th>
         <th>
-          <a id="heading" href="" ng-click="sortField = 'pounds'; reverse = !reverse">Total Amount</th>
+          <a id="heading" href="" ng-click="sortField = 'totalamount'; reverse = !reverse">Total Amount</th>
+        <th>
+          <a id="heading" href="" ng-click="sortField = 'emptype'; reverse = !reverse">Employment Type</th>
       </tr>
       <tr id="sortData" ng-repeat="order in orders | filter:query | orderBy:sortField:!reverse">
         <td>{{order.empnum}}</td>
@@ -56,6 +58,7 @@
         <td>{{order.lname}}</td>
         <td>{{order.totalpounds}}</td>
         <td>{{'$' + order.totalamount}}</td>
+        <td>{{order.emptype}}</td>
       </tr>
     </table>
   </div>

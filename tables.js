@@ -9,6 +9,7 @@ var query = client.query(
       empnum int, \
       fname varchar(255), \
       lname varchar(255), \
+      emptype varchar(255), \
       PRIMARY KEY (id) \
   )'
 );

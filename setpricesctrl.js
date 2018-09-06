@@ -34,7 +34,7 @@ app.controller('setPricesCtrl', function ($scope, $http) {
         $scope.price = '';
     }
 
-    $scope.deleteFunc = function (value, key) {
+    $scope.deleteFunc = function (key, value) {
         console.log('Into deleteFunc to delete data on setPrices.html');
         $http.post('/deletePrice', {
             'id': value.id,

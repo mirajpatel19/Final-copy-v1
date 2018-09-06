@@ -44,7 +44,7 @@
             <tr id="sortData" ng-repeat="(key,value) in orders | filter:query | orderBy:sortField:!reverse">
                 <td>{{value.saledate}}</td>
                 <td>{{value.price}}</td>
-                <td id='test' ng-click='deleteFunc(value, key)'>
+                <td id='test' ng-click='deleteFunc(key, value)'>
                     <a href="">Delete</a>
                 </td>
             </tr>

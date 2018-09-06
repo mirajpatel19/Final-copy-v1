@@ -8,6 +8,14 @@ img {
   margin-right: auto;
 }
 
+#salary {
+  margin-bottom: 10px;
+}
+
+#hourly {
+  margin-top: 8px;
+}
+
 #firstname,
 #lastname,
 #employeenumber,
