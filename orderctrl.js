@@ -35,10 +35,11 @@ app.controller('orderCtrl', function ($scope, $http) {
         console.log('Into addFunc to add data on orders.html: ');
 
         $http.post('/addOrder', {
-                'userid': $scope.userid,
+                //'userid': $scope.userid,
+                //'boxnum': $scope.boxnum,
                 'empnum': $scope.empnum,
-                'fname': $scope.fname,
-                'lname': $scope.lname,
+                //'fname': $scope.fname,
+                //'lname': $scope.lname,
                 'saledate': $scope.saledate,
                 'variety': $scope.variety,
                 'style': $scope.style,

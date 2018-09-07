@@ -26,6 +26,7 @@ var query = client.query(
       pounds float(8), \
       price numeric(6,2), \
       orderDate varchar(255), \
+      boxnum int, \
       PRIMARY KEY (id), \
       FOREIGN KEY (userid) REFERENCES users(id) \
   )'

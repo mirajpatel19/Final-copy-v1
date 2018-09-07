@@ -32,6 +32,7 @@ app.get('/cheeseorderform', function (req, res, next) {
   var employeenumber = req.query.employeenumber;
   var saledate = req.query.saledate;
   var typeOfEmp = req.query.typeOfEmpm;
+  var boxnum;
 
   var cheeseSaleDate = new Date(saledate);
   var day = cheeseSaleDate.getDate() + 1
@@ -223,12 +224,43 @@ app.get('/cheeseorderform', function (req, res, next) {
     //   throw err;
     // }
     console.log("Database connected!");
+
+    //////////////////////insert new field box# into database.
+    console.log(cheeseSaleDate);
+    client.query("select max(boxnum) from orders where saledate=$1", [cheeseSaleDate], function (err, boxnumResult) {
+      if (err) {
+        throw err;
+      }
+      //console.log("---------------------------------------------------");
+      //console.log(boxnumResult);
+      //if value is not falsy!
+      if (boxnumResult.rows[0].max) {
+        //console.log("value is not falsy!");
+        //console.log(boxnumResult.rows[0].max);
+      //console.log((boxnumResult.rows[0].max) + 1);
+      console.log("---------------------------------------------------");
+      boxnum = (boxnumResult.rows[0].max) + 1;
+      console.log(boxnum);
+      } else {
+        //set box number to one.
+        console.log("box number is one");
+        boxnum = 1;
+        console.log(boxnum);
+      }
+      
+    })
+    //console.log("out side of function! ", boxnum);
+
+
+
     //Checks if user exists into database.
     client.query("SELECT distinct fname FROM users where fname=$1 and lname=$2 and empnum=$3 and emptype=$4", [firstname, lastname, employeenumber, typeOfEmp], function (err, result, fields) {
       if (err) {
         throw err;
       }
-      //Insert user bc it does not exists.
+      
+
+      //Insert user bc it does not exist.
       if (result.rowCount == 0) {
         console.log("Not Match!");
         client.query("INSERT INTO users(fname, lname, empnum, emptype) \
@@ -254,13 +286,26 @@ app.get('/cheeseorderform', function (req, res, next) {
                 var num = result.rows[0];
                 var getId = num.id;
                 console.log("Found user data at index MR.: " + getId);
-                client.query("INSERT INTO orders(userid, saledate, variety, style, size, qty, pounds, price, orderDate) \
-                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [getId, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
-                  if (err) {
-                    throw err
-                  }
-                  console.log('Item added: ');
-                });
+
+                // //if price is set, get the price and insert it.
+                // client.query("select saledate, price from prices where saledate=$1", [cheeseSaleDate], function (err, resul) {
+                //   if (err) {
+                //     throw err
+                //   }
+                //   var temp = resul.rows[0];
+                //   array[i].price = temp.price;
+                //   console.log("---------------------------------------------------");
+                //   console.log("Found price! MR.: " + array[i].price);
+                //   console.log("---------------------------------------------------");
+
+                  client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
+                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
+                    if (err) {
+                      throw err
+                    }
+                    console.log('Item added: ');
+                  });
+                //});
               });
             }
           });
@@ -286,14 +331,28 @@ app.get('/cheeseorderform', function (req, res, next) {
               var getId = num.id;
               console.log("Found data user at index MR.: " + getId);
 
-              client.query("INSERT INTO orders(userid, saledate, variety, style, size, qty, pounds, price, orderDate) \
-                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [getId, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
+              // //if price is set, get the price and insert it.
+              // console.log(cheeseSaleDate);
+              // client.query("select saledate, price from prices where saledate=$1", [cheeseSaleDate], function (err, result) {
+              //   if (err) {
+              //     throw err
+              //   }
+              //   // var temp = resul.rows[0];
+              //   //array[i].price = temp.price;
+              //   console.log("---------------------------------------------------");
+              //   console.log("Found price! MR.: ", result);
+              //   console.log("---------------------------------------------------");
+
+
+              client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
+                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
                 if (err) {
                   throw err
                 }
                 console.log('Item added: ');
               });
-            });
+           // });
+          });
           }
         });
       }
@@ -651,7 +710,7 @@ app.post('/orders', function (req, res) {
     // }
     console.log("Database connected for orders!");
 
-    client.query("select orders.id, orders.userid, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.pounds, orders.orderdate from users inner join orders on users.id = orders.userid where orders.saledate=$1", [newDate], function (err, result, fields) {
+    client.query("select orders.id, orders.userid, orders.boxnum, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.pounds, orders.orderdate from users inner join orders on users.id = orders.userid where orders.saledate=$1", [newDate], function (err, result, fields) {
 
       console.log(result.rows);
       if (err) {
@@ -689,12 +748,39 @@ app.post('/addOrder', function (req, res) {
   console.log("Into addFunc with this data to add on server side: ");
   var addOrder = req.body;
   console.log(addOrder);
+  var addBoxnum;
+  var addFname;
+  var addLname;
+  var addUserid;
+
 
   //SQL DATABASE
   // client.connect(function(err) {
   //   if (err) {
   //     throw err;
   //   }
+
+  //look up for info from user table.
+  
+
+
+  client.query("select fname, lname, id from users where empnum=$1", [addOrder.empnum], function (err, resultFL) {
+    if (err) {
+      throw err;
+    }
+    addFname = resultFL.rows[0].fname;
+    addLname = resultFL.rows[0].lname;
+    addUserid = resultFL.rows[0].id;
+
+    client.query("select boxnum from orders where saledate=$1 and userid=$2", [addOrder.saledate, addUserid], function (err, resultBoxnum) {
+      if (err) {
+        throw err;
+      }
+      addBoxnum = resultBoxnum.rows[0].boxnum;
+    });
+
+  });
+
 
   //if price is set in setprice page, get price from there. IF not set price to 0.00. 
   client.query("select price, saledate from prices where saledate=$1", [addOrder.saledate], function (err, result) {
@@ -706,20 +792,23 @@ app.post('/addOrder', function (req, res) {
     // console.log("Just price");
     // console.log(result.rows[0].price);
 
+
     console.log("into query to look for price!!");
     if (result.rowCount == 1) {
       console.log("inside start of if statement!");
       var addPrice = (result.rows[0].price) * addOrder.pounds;
       console.log(addPrice);
-      client.query("INSERT INTO orders(userid, saledate, variety, style, size, qty, pounds, price) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8)", [addOrder.userid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds, addPrice], function (err, result, fields) {
+
+
+      client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price) \
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [addUserid, addBoxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds, addPrice], function (err, result, fields) {
         if (err) {
           throw err;
         }
         console.log("inside end of if statement!");
       });
       //get ID num to insert into the view.
-      client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addOrder.userid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
+      client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addUserid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
         if (err) {
           throw err;
         }
@@ -733,15 +822,15 @@ app.post('/addOrder', function (req, res) {
         }
       });
     } else {
-      client.query("INSERT INTO orders(userid, saledate, variety, style, size, qty, pounds, price) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, 0.00)", [addOrder.userid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, result, fields) {
+      client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price) \
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, 0.00)", [addUserid, addBoxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, result, fields) {
         if (err) {
           throw err;
         }
         console.log("inside else statement!");
       });
       //get ID num to insert into the view.
-      client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addOrder.userid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
+      client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addUserid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
         if (err) {
           throw err;
         }

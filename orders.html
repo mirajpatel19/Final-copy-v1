@@ -39,10 +39,10 @@
 
     <table id="sortTable">
       <tr>
+        <!-- <th>
+          <a id='heading' href="" ng-click="sortField = 'id'; reverse = !reverse">Id</th> -->
         <th>
-          <a id='heading' href="" ng-click="sortField = 'id'; reverse = !reverse">Id</th>
-        <th>
-          <a id="heading" href="" ng-click="sortField = 'userid'; reverse = !reverse">Box #</th>
+          <a id="heading" href="" ng-click="sortField = 'boxnum'; reverse = !reverse">Box #</th>
         <th>
           <a id="heading" href="" ng-click="sortField = 'empnum'; reverse = !reverse">Employee Number</th>
         <th>
@@ -66,8 +66,8 @@
         <th>Delete</th>
       </tr>
       <tr id="sortData" ng-repeat="(key,value) in orders | filter:query | orderBy:sortField:!reverse">
-        <td id='id'>{{value.id}}</td>
-        <td>{{value.userid}}</td>
+        <!-- <td id='id'>{{value.id}}</td> -->
+        <td>{{value.boxnum}}</td>
         <td>{{value.empnum}}</td>
         <td>{{value.fname}}</td>
         <td>{{value.lname}}</td>
@@ -86,10 +86,11 @@
     <hr>
     <form ng-submit="addFunc()">
       <input id="addId" type="number" ng-model="id" placeholder="Id" hidden>
-      <input id="addUserid" type="number" ng-model="userid" placeholder="Box #" required>
+      <input id="addUserid" type="number" ng-model="userid" placeholder="User Id" hidden>
+      <input id="addBoxnum" type="number" ng-model="boxnum" placeholder="Box #" hidden>
       <input id="addEmpnum" type="number" ng-model="empnum" placeholder="Employee Number" required>
-      <input id="addFname" type="text" ng-model="fname" placeholder="First Name" required>
-      <input id="addLname" type="text" ng-model="lname" placeholder="Last Name" required>
+      <input id="addFname" type="text" ng-model="fname" placeholder="First Name" hidden>
+      <input id="addLname" type="text" ng-model="lname" placeholder="Last Name" hidden>
       <input id="addSaledate" type="text" ng-model="saledate" placeholder="Sale Date" required>
       <input id="addVariety" type="text" ng-model="variety" placeholder="Variety" required>
       <input id="addStyle" type="text" ng-model="style" placeholder="Style" required>
