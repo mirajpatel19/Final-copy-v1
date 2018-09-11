@@ -39,8 +39,8 @@
 
     <table id="sortTable">
       <tr>
-        <!-- <th>
-          <a id='heading' href="" ng-click="sortField = 'id'; reverse = !reverse">Id</th> -->
+        <th>
+          <a id='heading' href="" ng-click="sortField = 'id'; reverse = !reverse">Id</th>
         <th>
           <a id="heading" href="" ng-click="sortField = 'boxnum'; reverse = !reverse">Box #</th>
         <th>
@@ -62,11 +62,13 @@
         <th>
           <a id="heading" href="" ng-click="sortField = 'pounds'; reverse = !reverse">Pounds</th>
         <th>
+          <a id="heading" href="" ng-click="sortField = 'pickUpStatus'; reverse = !reverse">Pick up?</th>
+        <th>
           <a id="heading" href="" ng-click="sortField = 'orderdate'; reverse = !reverse">Order Date</th>
         <th>Delete</th>
       </tr>
       <tr id="sortData" ng-repeat="(key,value) in orders | filter:query | orderBy:sortField:!reverse">
-        <!-- <td id='id'>{{value.id}}</td> -->
+          <td>{{value.id}}</td>
         <td>{{value.boxnum}}</td>
         <td>{{value.empnum}}</td>
         <td>{{value.fname}}</td>
@@ -77,6 +79,10 @@
         <td>{{value.size}}</td>
         <td>{{value.qty}}</td>
         <td>{{value.pounds}}</td>
+        <td>
+            <!-- <input type="checkbox" checklist-model='checkboxModel.value1'>  -->
+            <input type="checkbox" checklist-model="user.roles" checklist-value="Not Pick up"> 
+        </td>
         <td>{{value.orderdate}}</td>
         <td ng-click='deleteFunc(value.id, key)'>
           <a href="">Delete</a>
@@ -85,12 +91,9 @@
     </table>
     <hr>
     <form ng-submit="addFunc()">
-      <input id="addId" type="number" ng-model="id" placeholder="Id" hidden>
-      <input id="addUserid" type="number" ng-model="userid" placeholder="User Id" hidden>
-      <input id="addBoxnum" type="number" ng-model="boxnum" placeholder="Box #" hidden>
-      <input id="addEmpnum" type="number" ng-model="empnum" placeholder="Employee Number" required>
-      <input id="addFname" type="text" ng-model="fname" placeholder="First Name" hidden>
-      <input id="addLname" type="text" ng-model="lname" placeholder="Last Name" hidden>
+      <input id="addId" type="number" ng-model="id" placeholder="Id">
+      <input id="addBoxnum" type="number" ng-model="boxnum" placeholder="Box #" required>
+      
       <input id="addSaledate" type="text" ng-model="saledate" placeholder="Sale Date" required>
       <input id="addVariety" type="text" ng-model="variety" placeholder="Variety" required>
       <input id="addStyle" type="text" ng-model="style" placeholder="Style" required>
@@ -99,6 +102,8 @@
       <input id="addPounds" type="text" ng-model="pounds" placeholder="Pounds" required>
       <input id="add" type="submit" value="add">
     </form>
+    <tt>value1 = {{checkboxModel.value1}}</tt><br/>
+    {{role}}
 
   </div>
 </body>

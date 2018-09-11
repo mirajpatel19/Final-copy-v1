@@ -57,7 +57,7 @@ var query = client.query(
 
 //INNER JOIN. Based on all the orders recived. It will get user information.
 //
-// select users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.orderdate from users inner join orders on users.id = orders.userid;
+// select users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.orderdate, orders.pounds, orders.price, orders.boxnum from users inner join orders on users.id = orders.userid;
 //
 
 //CREATING A VIEW.

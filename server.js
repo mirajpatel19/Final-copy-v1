@@ -237,17 +237,17 @@ app.get('/cheeseorderform', function (req, res, next) {
       if (boxnumResult.rows[0].max) {
         //console.log("value is not falsy!");
         //console.log(boxnumResult.rows[0].max);
-      //console.log((boxnumResult.rows[0].max) + 1);
-      console.log("---------------------------------------------------");
-      boxnum = (boxnumResult.rows[0].max) + 1;
-      console.log(boxnum);
+        //console.log((boxnumResult.rows[0].max) + 1);
+        console.log("---------------------------------------------------");
+        boxnum = (boxnumResult.rows[0].max) + 1;
+        console.log(boxnum);
       } else {
         //set box number to one.
         console.log("box number is one");
         boxnum = 1;
         console.log(boxnum);
       }
-      
+
     })
     //console.log("out side of function! ", boxnum);
 
@@ -258,7 +258,7 @@ app.get('/cheeseorderform', function (req, res, next) {
       if (err) {
         throw err;
       }
-      
+
 
       //Insert user bc it does not exist.
       if (result.rowCount == 0) {
@@ -298,13 +298,13 @@ app.get('/cheeseorderform', function (req, res, next) {
                 //   console.log("Found price! MR.: " + array[i].price);
                 //   console.log("---------------------------------------------------");
 
-                  client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
+                client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
                   VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
-                    if (err) {
-                      throw err
-                    }
-                    console.log('Item added: ');
-                  });
+                  if (err) {
+                    throw err
+                  }
+                  console.log('Item added: ');
+                });
                 //});
               });
             }
@@ -351,8 +351,8 @@ app.get('/cheeseorderform', function (req, res, next) {
                 }
                 console.log('Item added: ');
               });
-           // });
-          });
+              // });
+            });
           }
         });
       }
@@ -489,26 +489,21 @@ app.get('/cheeseorderform', function (req, res, next) {
       return console.log(error);
     }
     console.log('Message sent: %s', info.messageId);
-    // Preview only available when sending through an Ethereal account
     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
   });
   res.redirect('confirmation.html');
   next()
 }, function (req, res, next) {
-  //res.redirect('/confirmation');
   res.end();
 });
 
 app.post('/payRoll', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Pulling the date from database for pay roll MR.: ");
 
   console.log(req.body);
 
   var date = req.body.date;
   console.log(date);
-  //var dollarValue = req.body.dollarValue;
-  //console.log(dollarValue);
 
   var newDate = new Date(date);
   var day = newDate.getDate();
@@ -526,20 +521,14 @@ app.post('/payRoll', function (req, res) {
 
   //SQL DATABASE
   client.connect(function (err) {
-    // if (err) {
-    //   throw err;
-    // }
+    
     console.log("Database connected for pay roll!");
 
     client.query("select users.empnum, users.fname, users.lname, users.emptype, sum(orders.pounds) as totalpounds, sum(orders.price) as totalamount from users inner join orders on users.id = orders.userid where orders.saledate=$1 group by users.empnum, users.fname, users.lname, users.emptype;", [newDate], function (err, result, fields) {
-      //select orders.userid, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.orderdate from users inner join orders on users.id = orders.userid where orders.saledate=$1
       console.log(result.rows);
       if (err) {
         throw err;
       }
-      // console.log(typeof result.rows.empnum);
-      //result.rows.totalAmount = 3.56;
-      //console.log(result.rows);
 
       res.send(result.rows);
       res.end;
@@ -549,16 +538,13 @@ app.post('/payRoll', function (req, res) {
 });
 
 app.post('/setPrices', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Pulling the date from database for set prices MR.: ");
 
   console.log(req.body);
 
   //SQL DATABASE
   client.connect(function (err) {
-    // if (err) {
-    //   throw err;
-    // }
+    
     console.log("Database connected for setPrices!");
 
     client.query("select id, saledate, price from prices order by saledate;", function (err, result, fields) {
@@ -566,9 +552,6 @@ app.post('/setPrices', function (req, res) {
       if (err) {
         throw err;
       }
-      // console.log(typeof result.rows.empnum);
-      //result.rows.totalAmount = 3.56;
-      //console.log(result.rows);
 
       res.send(result.rows);
       res.end;
@@ -578,7 +561,6 @@ app.post('/setPrices', function (req, res) {
 });
 
 app.post('/addPrices', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Pulling the date from database for add prices MR.: ");
 
   console.log(req.body);
@@ -604,9 +586,7 @@ app.post('/addPrices', function (req, res) {
 
   //SQL DATABASE
   client.connect(function (err) {
-    // if (err) {
-    //   throw err;
-    // }
+    
     console.log("Database connected for setPrices!");
 
     client.query("insert into prices (saledate, price) values ($1, $2);", [saledate, price], function (err, result, fields) {
@@ -614,7 +594,6 @@ app.post('/addPrices', function (req, res) {
       if (err) {
         throw err;
       }
-      console.log("here is sale date before query for orders table: " + saledate);
       //update the order table with the prices! CREATE A NEW FUNCTION CALLED updateOrders
       client.query("select id, pounds, saledate from orders where saledate=$1;", [saledate], function (err, resu) {
         if (err) {
@@ -624,7 +603,6 @@ app.post('/addPrices', function (req, res) {
         console.log(resu.rows);
         var poundsList = resu.rows;
         console.log('Here is just pounds!');
-        //console.log(poundsList[0].pounds);
 
         console.log('Right before foreach loop for orders query');
         poundsList.forEach(function (item, i) {
@@ -641,41 +619,96 @@ app.post('/addPrices', function (req, res) {
             }
             console.log("inside query to insert");
           })
-
         })
       });
-
+    });
+    //getid and send it back!
+    client.query("select id from prices where saledate=$1 and price=$2", [saledate, price], function (err, resu, fields) {
+      if (err) {
+        throw err;
+      }
+      console.log("from the query");
+      console.log(resu.rowCount);
+      console.log(resu.rows[0].id);
+      if (resu.rowCount == 1) {
+        console.log('here is id: ', resu.rows[0].id);
+        res.send(resu.rows);
+      }
     });
     console.log("End of the function!");
-    res.end;
   });
 });
 
 app.post('/deletePrice', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Into deletePrice with this data to delete on server side: ");
   console.log(req.body);
   var removeId = req.body.id;
   var removeDateValues = req.body.saledate;
+  var removePriceValues = req.body.price;
   console.log("removeDateValues is: " + removeDateValues);
 
   //SQL DATABASE
   client.connect(function (err) {
-    //   if (err) {
-    //     throw err;
-    //   }
+
     console.log("Database connected for deletePrice!");
-    client.query("delete from prices where saledate=$1;", [removeDateValues], function (err, result, fields) {
+    client.query("delete from prices where saledate=$1 and id=$2;", [removeDateValues, removeId], function (err, result, fields) {
       if (err) {
         throw err;
       }
-      //set prices to 0.00 for those dates.
-      client.query("update orders set price=0.00 where saledate=$1;", [removeDateValues], function (err, res) {
+      //Check if price is set on setprices database for that particular date.
+      client.query("select price, saledate from prices where saledate=$1", [removeDateValues], function (err, result) {
         if (err) {
           throw err;
         }
-      })
+        var addPrice = 0.00;
+        var id;
 
+        //price is found for that particular date. 
+        if (result.rowCount >= 1) {
+          //update the order table with the prices! 
+          client.query("select id, pounds, saledate from orders where saledate=$1;", [removeDateValues], function (err, resu) {
+            if (err) {
+              throw err;
+            }
+            var poundsList = resu.rows;
+            console.log('Here is just pounds!');
+            console.log(poundsList[0].pounds);
+            //loop to update each row of pounds with that particular date. 
+            poundsList.forEach(function (item, i) {
+              id = poundsList[i].id;
+              console.log("--------------------------------------------------");
+              console.log("Id: " + id);
+              console.log("Pounds: " + poundsList[i].pounds);
+              addPrice = (poundsList[i].pounds * result.rows[0].price).toFixed(2);
+              console.log("Total Price calculated: " + addPrice);
+              //call function to update rows. 
+              updatePrice();
+            })
+          });
+        }
+        //price is not found for that particular date. 
+        else {
+          updatePriceToZero();
+        }
+
+        function updatePrice() {
+          client.query("update orders set price=$1 where id=$2;", [addPrice, id], function (err, res) {
+            if (err) {
+              throw err;
+            }
+          })
+        }
+
+        function updatePriceToZero() {
+          //addPrice is set to 0.00
+          client.query("update orders set price=$1 where saledate=$2;", [addPrice, removeDateValues], function (err, res) {
+            console.log("inside update query with value of addPrice: ", addPrice);
+            if (err) {
+              throw err;
+            }
+          })
+        }
+      });
     });
   });
 });
@@ -705,9 +738,7 @@ app.post('/orders', function (req, res) {
 
   //SQL DATABASE
   client.connect(function (err) {
-    // if (err) {
-    //   throw err;
-    // }
+    
     console.log("Database connected for orders!");
 
     client.query("select orders.id, orders.userid, orders.boxnum, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.pounds, orders.orderdate from users inner join orders on users.id = orders.userid where orders.saledate=$1", [newDate], function (err, result, fields) {
@@ -716,7 +747,6 @@ app.post('/orders', function (req, res) {
       if (err) {
         throw err;
       }
-      //console.log("hello");
       res.send(result.rows);
       res.end;
     });
@@ -724,63 +754,38 @@ app.post('/orders', function (req, res) {
 });
 
 app.post('/deleteOrder', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Into deleteFunc with this data to delete on server side: ");
   console.log(req.body);
   var removeId = req.body.id;
 
-  // //SQL DATABASE
-  //client.connect(function (err) {
-  //   if (err) {
-  //     throw err;
-  //   }
+  //SQL DATABASE
+  client.connect(function (err) {
+  
   console.log("Database connected for deleteOrder!");
-  client.query("delete from orders where  id=$1", [removeId], function (err, result, fields) {
+  client.query("delete from orders where id=$1", [removeId], function (err, result, fields) {
     if (err) {
       throw err;
     }
   });
-  //});
+  });
 });
 
 app.post('/addOrder', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Into addFunc with this data to add on server side: ");
   var addOrder = req.body;
   console.log(addOrder);
-  var addBoxnum;
-  var addFname;
-  var addLname;
-  var addUserid;
+  var addPrice = 0.00;
 
-
-  //SQL DATABASE
-  // client.connect(function(err) {
-  //   if (err) {
-  //     throw err;
-  //   }
-
-  //look up for info from user table.
-  
-
-
-  client.query("select fname, lname, id from users where empnum=$1", [addOrder.empnum], function (err, resultFL) {
+  //look up for info from user and order tables.
+  client.query("select users.empnum, users.id, users.fname, users.lname, orders.saledate, orders.boxnum from users inner join orders on users.id = orders.userid where saledate=$1 and boxnum=$2;", [addOrder.saledate, addOrder.boxnum], function (err, resultFL) {
     if (err) {
       throw err;
     }
-    addFname = resultFL.rows[0].fname;
-    addLname = resultFL.rows[0].lname;
-    addUserid = resultFL.rows[0].id;
-
-    client.query("select boxnum from orders where saledate=$1 and userid=$2", [addOrder.saledate, addUserid], function (err, resultBoxnum) {
-      if (err) {
-        throw err;
-      }
-      addBoxnum = resultBoxnum.rows[0].boxnum;
-    });
-
+    addOrder.fname = resultFL.rows[0].fname;
+    addOrder.lname = resultFL.rows[0].lname;
+    addOrder.empnum = resultFL.rows[0].empnum;
+    addOrder.userid = resultFL.rows[0].id;
   });
-
 
   //if price is set in setprice page, get price from there. IF not set price to 0.00. 
   client.query("select price, saledate from prices where saledate=$1", [addOrder.saledate], function (err, result) {
@@ -789,69 +794,57 @@ app.post('/addOrder', function (req, res) {
     }
     console.log("for price query");
     console.log(result.rows);
-    // console.log("Just price");
-    // console.log(result.rows[0].price);
-
 
     console.log("into query to look for price!!");
     if (result.rowCount == 1) {
       console.log("inside start of if statement!");
-      var addPrice = (result.rows[0].price) * addOrder.pounds;
+      addPrice = (result.rows[0].price) * addOrder.pounds;
       console.log(addPrice);
 
-
-      client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [addUserid, addBoxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds, addPrice], function (err, result, fields) {
-        if (err) {
-          throw err;
-        }
-        console.log("inside end of if statement!");
-      });
+      setPrice();
       //get ID num to insert into the view.
-      client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addUserid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
-        if (err) {
-          throw err;
-        }
-        console.log("from the query");
-        console.log(resu.rowCount);
-        //console.log(resu);
-        if (resu.rowCount == 1) {
-          console.log('here are rows');
-          console.log(resu.rows);
-          res.send(resu.rows);
-        }
-      });
-    } else {
-      client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, 0.00)", [addUserid, addBoxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, result, fields) {
-        if (err) {
-          throw err;
-        }
-        console.log("inside else statement!");
-      });
+      getId();
+    }
+    //Price is not set.
+    else {
+      setPrice();
       //get ID num to insert into the view.
-      client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addUserid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
-        if (err) {
-          throw err;
-        }
-        console.log("from the query");
-        console.log(resu.rowCount);
-        //console.log(resu);
-        if (resu.rowCount == 1) {
-          console.log('here are rows');
-          console.log(resu.rows);
-          res.send(resu.rows);
-        }
-      });
+      getId();
     }
   });
 
-  console.log("Database connected for addOrder!");
+  function getId() {
+    client.query("select id from orders where userid=$1 and saledate=$2 and variety=$3 and style=$4 and size=$5 and qty=$6 and pounds=$7", [addOrder.userid, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds], function (err, resu, fields) {
+      if (err) {
+        throw err;
+      }
+      console.log("from the query");
+      console.log(resu.rowCount);
+      if (resu.rowCount == 1) {
+        console.log('here are rows');
+        console.log('rows', resu.rows[0].id);
+        addOrder.id = resu.rows[0].id;
 
+        console.log("my new object........");
+        console.log(addOrder);
+        res.send(addOrder);
+        console.log('first');
+      }
+    });
+  }
+
+  function setPrice() {
+    client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price) \
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [addOrder.userid, addOrder.addBoxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds, addPrice], function (err, result, fields) {
+      if (err) {
+        throw err;
+      }
+      console.log("inside end of if statement!");
+    });
+  }
 });
 
 app.post('/picklist', function (req, res) {
-  /* Handling the AngularJS post request*/
   console.log("Pulling the date from database for pick list MR.: ");
 
   var date = req.body.date;
@@ -873,9 +866,7 @@ app.post('/picklist', function (req, res) {
 
   //SQL DATABASE
   client.connect(function (err) {
-    // if (err) {
-    //   throw err;
-    // }
+   
     console.log("Database connected for pick list!");
 
     client.query("select saledate, variety, style, size, sum(qty) as qty, count(*) from orders where saledate=$1 group by variety, style, size, saledate", [newDate], function (err, result, fields) {

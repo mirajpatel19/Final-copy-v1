@@ -1,10 +1,26 @@
 app.controller('orderCtrl', function ($scope, $http) {
     $scope.date = ' ';
-
+    
     // $scope.filter = myService.style();
     $scope.send = function () {
         console.log("inside send function with date: ");
         console.log($scope.data.date);
+
+        var newDate = new Date($scope.data.date);
+        var day = newDate.getDate();
+        var month = newDate.getMonth() + 1;
+        var year = newDate.getFullYear();
+
+        if (day < 10) {
+            day = '0' + day
+        }
+        if (month < 10) {
+            month = '0' + month
+        }
+        var newDate = month + '/' + day + '/' + year;
+        console.log("here is my new date: " + newDate);
+
+        $scope.saledate = newDate;
 
         $http.post('/orders', {
                 'date': $scope.data.date
@@ -35,11 +51,7 @@ app.controller('orderCtrl', function ($scope, $http) {
         console.log('Into addFunc to add data on orders.html: ');
 
         $http.post('/addOrder', {
-                //'userid': $scope.userid,
-                //'boxnum': $scope.boxnum,
-                'empnum': $scope.empnum,
-                //'fname': $scope.fname,
-                //'lname': $scope.lname,
+                'boxnum': $scope.boxnum,
                 'saledate': $scope.saledate,
                 'variety': $scope.variety,
                 'style': $scope.style,
@@ -48,15 +60,17 @@ app.controller('orderCtrl', function ($scope, $http) {
                 'pounds': $scope.pounds
             })
             .then(function (response) {
-                $scope.idData = response.data;
+                console.log("here is the response on addorder: ");
+                console.log(response.data);
                 console.log("into response for addFunc: ");
 
                 $scope.orders.push({
-                    'id': $scope.idData[0].id,
+                    'id': response.data.id,
+                    'boxnum': $scope.boxnum,
                     'userid': $scope.userid,
-                    'empnum': $scope.empnum,
-                    'fname': $scope.fname,
-                    'lname': $scope.lname,
+                    'empnum': response.data.empnum,
+                    'fname': response.data.fname,
+                    'lname': response.data.lname,
                     'saledate': $scope.saledate,
                     'variety': $scope.variety,
                     'style': $scope.style,
@@ -66,11 +80,8 @@ app.controller('orderCtrl', function ($scope, $http) {
                 });
 
                 //Clearing form values
-                $scope.userid = '';
-                $scope.empnum = '';
-                $scope.fname = '';
-                $scope.lname = '';
-                $scope.saledate = '';
+                $scope.id = '';
+                $scope.boxnum = '';
                 $scope.variety = '';
                 $scope.style = '';
                 $scope.size = '';
