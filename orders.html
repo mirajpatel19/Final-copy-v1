@@ -21,7 +21,7 @@
           <strong>Cheese Sale Date</strong>
           <span class="required">*</span>
         </label>
-        <input type="date" name="date" ng-model="data.date">
+        <input type="date" name="date" ng-model="myDate">
         <button ng-click="send()">
           <strong>Search</strong>
         </button>
@@ -79,10 +79,11 @@
         <td>{{value.size}}</td>
         <td>{{value.qty}}</td>
         <td>{{value.pounds}}</td>
-        <td>
-            <!-- <input type="checkbox" checklist-model='checkboxModel.value1'>  -->
-            <input type="checkbox" checklist-model="user.roles" checklist-value="Not Pick up"> 
-        </td>
+        <!-- <td>
+            <form ng-submit="pickUpFunc()">
+              <input type="checkbox" checklist-model="user.roles" checklist-value="Not Pick up"> 
+            </form>
+        </td> -->
         <td>{{value.orderdate}}</td>
         <td ng-click='deleteFunc(value.id, key)'>
           <a href="">Delete</a>
@@ -102,8 +103,8 @@
       <input id="addPounds" type="text" ng-model="pounds" placeholder="Pounds" required>
       <input id="add" type="submit" value="add">
     </form>
-    <tt>value1 = {{checkboxModel.value1}}</tt><br/>
-    {{role}}
+    <!-- <tt>value1 = {{checkboxModel.value1}}</tt><br/>
+    {{role}} -->
 
   </div>
 </body>

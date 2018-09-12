@@ -1,16 +1,14 @@
 app.controller('orderCtrl', function ($scope, $http) {
     $scope.date = ' ';
-    
+
     // $scope.filter = myService.style();
     $scope.send = function () {
         console.log("inside send function with date: ");
-        console.log($scope.data.date);
-
-        var newDate = new Date($scope.data.date);
+        console.log($scope.myDate);
+        var newDate = new Date($scope.myDate);
         var day = newDate.getDate();
         var month = newDate.getMonth() + 1;
         var year = newDate.getFullYear();
-
         if (day < 10) {
             day = '0' + day
         }
@@ -19,11 +17,9 @@ app.controller('orderCtrl', function ($scope, $http) {
         }
         var newDate = month + '/' + day + '/' + year;
         console.log("here is my new date: " + newDate);
-
         $scope.saledate = newDate;
-
         $http.post('/orders', {
-                'date': $scope.data.date
+                'date': $scope.myDate
             })
             .then(function (response) {
                 $scope.orders = response.data;
@@ -35,7 +31,6 @@ app.controller('orderCtrl', function ($scope, $http) {
     $scope.deleteFunc = function (value, key) {
         console.log('Into deleteFunc to delete data on orders.html with Id, index: ');
         console.log(value, key);
-
         $http.post('/deleteOrder', {
             'id': value
         })
@@ -49,7 +44,6 @@ app.controller('orderCtrl', function ($scope, $http) {
 
     $scope.addFunc = function () {
         console.log('Into addFunc to add data on orders.html: ');
-
         $http.post('/addOrder', {
                 'boxnum': $scope.boxnum,
                 'saledate': $scope.saledate,
@@ -63,7 +57,6 @@ app.controller('orderCtrl', function ($scope, $http) {
                 console.log("here is the response on addorder: ");
                 console.log(response.data);
                 console.log("into response for addFunc: ");
-
                 $scope.orders.push({
                     'id': response.data.id,
                     'boxnum': $scope.boxnum,
@@ -78,7 +71,6 @@ app.controller('orderCtrl', function ($scope, $http) {
                     'qty': $scope.qty,
                     'pounds': $scope.pounds
                 });
-
                 //Clearing form values
                 $scope.id = '';
                 $scope.boxnum = '';
@@ -89,4 +81,49 @@ app.controller('orderCtrl', function ($scope, $http) {
                 $scope.pounds = '';
             });
     }
+
+    //getting next cheese sale date.
+    var date = new Date();
+    //console.log("todays date: " + date);
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    //console.log('First day of month: ' + firstDay);
+    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    // console.log('Last day of month: ' + lastDay);
+    var dayOfMonth = firstDay.getDate();
+    var fridayCounter = 1;
+    var thirdFriday;
+    while (dayOfMonth < lastDay.getDate()) {
+        var newDate = new Date(date.getFullYear(), date.getMonth(), dayOfMonth);
+        if (newDate.getDay() == 5) {
+            //console.log(" ");
+            // console.log(newDate);
+            // console.log('ITS FRIDAY........');
+            //console.log(" ");
+            if (fridayCounter == 3) {
+                //console.log('Its third friday of the month!!!!!!');
+                thirdFriday = newDate;
+                //console.log('Here is the date for it: ' + thirdFriday);
+            }
+            var fridayCounter = fridayCounter + 1;
+        }
+        dayOfMonth = dayOfMonth + 1;
+    }
+    console.log("3rd friday: " + thirdFriday);
+    //var test = new Date(date.getFullYear(), date.getMonth(), 6);
+    //document.getElementById("saledate").valueAsDate = thirdFriday;
+    $scope.myDate = thirdFriday;
+
+    //format date
+    var newDate = new Date(thirdFriday);
+    var day = newDate.getDate();
+    var month = newDate.getMonth() + 1;
+    var year = newDate.getFullYear();
+    if (day < 10) {
+        day = '0' + day
+    }
+    if (month < 10) {
+        month = '0' + month
+    }
+    thirdFriday = month + '/' + day + '/' + year;
+    $scope.saledate = thirdFriday;
 });
