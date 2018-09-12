@@ -61,11 +61,14 @@
           <a id="heading" href="" ng-click="sortField = 'qty'; reverse = !reverse">Qty</th>
         <th>
           <a id="heading" href="" ng-click="sortField = 'pounds'; reverse = !reverse">Pounds</th>
+            <th>
+              <a id="heading" href="" ng-click="sortField = 'pickUpStatus'; reverse = !reverse">Pick up Status</th>
         <th>
           <a id="heading" href="" ng-click="sortField = 'pickUpStatus'; reverse = !reverse">Pick up?</th>
         <th>
           <a id="heading" href="" ng-click="sortField = 'orderdate'; reverse = !reverse">Order Date</th>
         <th>Delete</th>
+        <th>Pick-up?</th>
       </tr>
       <tr id="sortData" ng-repeat="(key,value) in orders | filter:query | orderBy:sortField:!reverse">
           <td>{{value.id}}</td>
@@ -79,15 +82,15 @@
         <td>{{value.size}}</td>
         <td>{{value.qty}}</td>
         <td>{{value.pounds}}</td>
-        <!-- <td>
-            <form ng-submit="pickUpFunc()">
-              <input type="checkbox" checklist-model="user.roles" checklist-value="Not Pick up"> 
-            </form>
-        </td> -->
+        <td>{{value.pickupstatus}}</td>
+        <td ng-click='pickUpFunc(key, value.id)'>
+              <input type="checkbox" ng-model="value.check" ng-checked="value.pickupstatus == 'No'">
+        </td>
         <td>{{value.orderdate}}</td>
         <td ng-click='deleteFunc(value.id, key)'>
           <a href="">Delete</a>
         </td>
+        <td>{{value.check}}</td>
       </tr>
     </table>
     <hr>
@@ -103,9 +106,6 @@
       <input id="addPounds" type="text" ng-model="pounds" placeholder="Pounds" required>
       <input id="add" type="submit" value="add">
     </form>
-    <!-- <tt>value1 = {{checkboxModel.value1}}</tt><br/>
-    {{role}} -->
-
   </div>
 </body>
 

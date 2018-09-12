@@ -497,7 +497,7 @@ app.post('/payRoll', function (req, res) {
   //SQL DATABASE
   client.connect(function (err) {
     console.log("Database connected for pay roll!");
-    client.query("select users.empnum, users.fname, users.lname, users.emptype, sum(orders.pounds) as totalpounds, sum(orders.price) as totalamount from users inner join orders on users.id = orders.userid where orders.saledate=$1 group by users.empnum, users.fname, users.lname, users.emptype;", [newDate], function (err, result, fields) {
+    client.query("select users.empnum, users.fname, users.lname, users.emptype, orders.pickupstatus, sum(orders.pounds) as totalpounds, sum(orders.price) as totalamount from users inner join orders on users.id = orders.userid where orders.saledate=$1 group by users.empnum, users.fname, users.lname, users.emptype, orders.pickupstatus;", [newDate], function (err, result, fields) {
       console.log(result.rows);
       if (err) {
         throw err;
@@ -692,7 +692,7 @@ app.post('/orders', function (req, res) {
   //SQL DATABASE
   client.connect(function (err) {
     console.log("Database connected for orders!");
-    client.query("select orders.id, orders.userid, orders.boxnum, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.pounds, orders.orderdate from users inner join orders on users.id = orders.userid where orders.saledate=$1", [newDate], function (err, result, fields) {
+    client.query("select orders.id, orders.userid, orders.boxnum, users.empnum, users.fname, users.lname, orders.saledate, orders.variety, orders.style, orders.size, orders.qty, orders.pounds, orders.orderdate, orders.pickupstatus from users inner join orders on users.id = orders.userid where orders.saledate=$1", [newDate], function (err, result, fields) {
       console.log(result.rows);
       if (err) {
         throw err;
@@ -788,6 +788,17 @@ app.post('/addOrder', function (req, res) {
       console.log("inside end of if statement!");
     });
   }
+});
+
+app.post('/pickupstatus', function (req, res) {
+  console.log('Into pickupstatus in the server side with value: ');
+  console.log(req.body.id);
+  
+  client.query("update orders set pickupstatus='No' where id=$1", [req.body.id], function (err, result, fields) {
+    if (err) {
+      throw err;
+    }
+  });
 });
 
 app.post('/picklist', function (req, res) {
