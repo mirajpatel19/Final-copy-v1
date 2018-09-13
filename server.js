@@ -19,6 +19,7 @@ app.get('/', function (req, res) {
   return res.redirect('/index.html')
 }).listen(8888);
 console.log('Server is listening at 8888');
+
 app.use('/', express.static(__dirname + '/'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -74,12 +75,11 @@ app.get('/cheeseorderform', function (req, res, next) {
 
   var email = req.query.email;
   var mainEmail = "mpatel@josephfarms.com";
+  // var mainEmail = "cheeseorders@josephfarms.com"
 
   console.log('here is qt for item one: ')
   console.log(req.query.countPounds1);
-  // console.log("saledate is before array " + saledate);
   var array = new Array(16);
-  //var test;
   array[0] = {
     'variety': req.query.variety1,
     'style': req.query.style1,
@@ -214,7 +214,6 @@ app.get('/cheeseorderform', function (req, res, next) {
   client.connect(function (err) {
 
     console.log("Database connected!");
-
     //insert new field box# into database.
     console.log(cheeseSaleDate);
     client.query("select max(boxnum) from orders where saledate=$1", [cheeseSaleDate], function (err, boxnumResult) {
@@ -231,7 +230,6 @@ app.get('/cheeseorderform', function (req, res, next) {
         boxnum = 1;
         console.log(boxnum);
       }
-
     })
 
     //Checks if user exists into database.
@@ -267,25 +265,23 @@ app.get('/cheeseorderform', function (req, res, next) {
                 var getId = num.id;
                 console.log("Found user data at index: " + getId);
 
-                // //if price is set, get the price and insert it.
-                // client.query("select saledate, price from prices where saledate=$1", [cheeseSaleDate], function (err, resul) {
-                //   if (err) {
-                //     throw err
-                //   }
-                //   var temp = resul.rows[0];
-                //   array[i].price = temp.price;
-                //   console.log("---------------------------------------------------");
-                //   console.log("Found price! MR.: " + array[i].price);
-                //   console.log("---------------------------------------------------");
-
-                client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
-                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
+                //if price is set, get the price and insert it.
+                console.log(cheeseSaleDate);
+                client.query("select saledate, price from prices where saledate=$1", [cheeseSaleDate], function (err, result) {
                   if (err) {
                     throw err
                   }
-                  console.log('Item added: ');
+                  console.log("---------------------------------------------------");
+                  console.log("Found price! MR.: ", result.rows[0].price);
+                  var price = array[i].pounds * result.rows[0].price;
+                  client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
+                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, price, dateNow], function (err, resu) {
+                    if (err) {
+                      throw err
+                    }
+                    console.log('Item added: ');
+                  });
                 });
-                //});
               });
             }
           });
@@ -311,26 +307,23 @@ app.get('/cheeseorderform', function (req, res, next) {
               var getId = num.id;
               console.log("Found data user at index MR.: " + getId);
 
-              // //if price is set, get the price and insert it.
-              // console.log(cheeseSaleDate);
-              // client.query("select saledate, price from prices where saledate=$1", [cheeseSaleDate], function (err, result) {
-              //   if (err) {
-              //     throw err
-              //   }
-              //   // var temp = resul.rows[0];
-              //   //array[i].price = temp.price;
-              //   console.log("---------------------------------------------------");
-              //   console.log("Found price! MR.: ", result);
-              //   console.log("---------------------------------------------------");
-
-              client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
-                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, array[i].price, dateNow], function (err, resu) {
+              //if price is set, get the price and insert it.
+              console.log(cheeseSaleDate);
+              client.query("select saledate, price from prices where saledate=$1", [cheeseSaleDate], function (err, result) {
                 if (err) {
                   throw err
                 }
-                console.log('Item added: ');
+                console.log("---------------------------------------------------");
+                console.log("Found price! MR.: ", result.rows[0].price);
+                var price = array[i].pounds * result.rows[0].price;
+                client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price, orderDate) \
+                  VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [getId, boxnum, cheeseSaleDate, array[i].variety, array[i].style, array[i].size, array[i].qty, array[i].pounds, price, dateNow], function (err, resu) {
+                  if (err) {
+                    throw err
+                  }
+                  console.log('Item added: ');
+                });
               });
-              // });
             });
           }
         });
@@ -562,8 +555,6 @@ app.post('/addPrices', function (req, res) {
         console.log(resu.rows);
         var poundsList = resu.rows;
         console.log('Here is just pounds!');
-
-        console.log('Right before foreach loop for orders query');
         poundsList.forEach(function (item, i) {
           var id = poundsList[i].id;
           console.log("Id: " + id);
@@ -724,8 +715,9 @@ app.post('/addOrder', function (req, res) {
   var addOrder = req.body;
   console.log(addOrder);
   var addPrice = 0.00;
+  console.log(addOrder.boxnum);
 
-  //look up for info from user and order tables.
+  //look up for info need from user and order tables.
   client.query("select users.empnum, users.id, users.fname, users.lname, orders.saledate, orders.boxnum from users inner join orders on users.id = orders.userid where saledate=$1 and boxnum=$2;", [addOrder.saledate, addOrder.boxnum], function (err, resultFL) {
     if (err) {
       throw err;
@@ -781,7 +773,7 @@ app.post('/addOrder', function (req, res) {
 
   function setPrice() {
     client.query("INSERT INTO orders(userid, boxnum, saledate, variety, style, size, qty, pounds, price) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [addOrder.userid, addOrder.addBoxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds, addPrice], function (err, result, fields) {
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)", [addOrder.userid, addOrder.boxnum, addOrder.saledate, addOrder.variety, addOrder.style, addOrder.size, addOrder.qty, addOrder.pounds, addPrice], function (err, result, fields) {
       if (err) {
         throw err;
       }
@@ -793,7 +785,7 @@ app.post('/addOrder', function (req, res) {
 app.post('/pickupstatus', function (req, res) {
   console.log('Into pickupstatus in the server side with value: ');
   console.log(req.body.id);
-  
+
   client.query("update orders set pickupstatus='No' where id=$1", [req.body.id], function (err, result, fields) {
     if (err) {
       throw err;
