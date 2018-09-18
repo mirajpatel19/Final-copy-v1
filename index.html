@@ -6,7 +6,7 @@
   <title>Cheese Sales</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </head>
 
 <body id="main" ng-app="myApp">
@@ -645,7 +645,7 @@
           <td>
             <select id="size9" name="size9" onchange="myCalTotal()">
               <option value="0" selected>0</option>
-              </select>
+            </select>
           </td>
           <td>
             <select id="qty9" name="qty9" onchange="myCalTotal()">
@@ -775,7 +775,7 @@
           <td>
             <select id="size11" name="size11" onchange="myCalTotal()">
               <option value="0" selected>0</option>
-              </select>
+            </select>
           </td>
           <td>
             <select id="qty11" name="qty11" onchange="myCalTotal()">
@@ -1211,7 +1211,8 @@
         var optionArray = ["0|0", "2 lb|2 lb"];
       } else if (vari.value == "Marble Jack" | vari.value == "Monterey Jack" | vari.value == "Pepper Jack" | vari.value ==
         "Marble Cheddar" | vari.value == "Medium Cheddar" | vari.value == "Mild Cheddar" | vari.value ==
-        "Sharp Cheddar" | vari.value == "Part Skim Mozz" | vari.value == "Whole Milk Mozz" | vari.value == "Mozz" | vari.value == "String" |
+        "Sharp Cheddar" | vari.value == "Part Skim Mozz" | vari.value == "Whole Milk Mozz" | vari.value == "Mozz" |
+        vari.value == "String" |
         vari.value == "Cream Cheese" | vari.value == "Muenster" | vari.value == "Provolone" | vari.value == "Swiss" |
         vari.value == "Variety Pack") {
         var optionArray = ["0|0"];
@@ -1358,17 +1359,7 @@
           calQty15) * parseFloat(calSize15)) +
         (parseInt(calQty16) * parseFloat(calQty16))
       console.log('Here is calTotal: ', calTotal);
-      // Alert Message!
-      if (parseFloat(calTotal) > 15.00) {
-        alert(
-          "Employee’s are allowed a maximum of 15 pounds for Monthly Cheese Orders. To submit the order, please lower the pounds."
-        );
-        document.getElementById("total").innerHTML = calTotal;
-        document.getElementById("submit").disabled = true;
-      } else {
-        document.getElementById("total").innerHTML = calTotal;
-        document.getElementById("submit").disabled = false;
-      }
+
 
       var countPounds1 = (parseInt(calQty1) * parseFloat(calSize1));
       var countPounds2 = (parseInt(calQty2) * parseFloat(calSize2));
@@ -1411,6 +1402,21 @@
         parseFloat(countPounds13) + parseFloat(countPounds14) + parseFloat(countPounds15) +
         parseFloat(countPounds16);
       console.log("Pounds all total: " + calPounds);
+
+      // Alert Message!
+      // if (parseFloat(calTotal) > 15.00) {
+      if (parseFloat(calPounds) > 15.00) {
+        alert(
+          "Employee’s are allowed a maximum of 15 pounds for Monthly Cheese Orders. To submit the order, please lower the pounds."
+        );
+        //document.getElementById("total").innerHTML = calTotal;
+        document.getElementById("total").innerHTML = calPounds;
+        document.getElementById("submit").disabled = true;
+      } else {
+        //document.getElementById("total").innerHTML = calTotal;
+        document.getElementById("total").innerHTML = calPounds;
+        document.getElementById("submit").disabled = false;
+      }
     }
   </script>
 
@@ -1469,5 +1475,5 @@
       mm = '0' + mm
     }
     today = yyyy + '-' + mm + '-' + dd;
-    document.getElementById("saledate").setAttribute("min", today);
+    //document.getElementById("saledate").setAttribute("min", today);
   </script>

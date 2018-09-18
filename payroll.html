@@ -54,6 +54,7 @@
         <th>
           <a id="heading" href="" ng-click="sortField = 'pickupstatus'; reverse = !reverse">Pick Up Status</th>
       </tr>
+
       <tr id="sortData" ng-repeat="order in orders | filter:query | orderBy:sortField:!reverse">
         <td>{{order.empnum}}</td>
         <td>{{order.fname}}</td>
@@ -65,6 +66,13 @@
       </tr>
     </table>
   </div>
+
+  <!-- link to download table to excel.  -->
+  <!-- <a id="link-1" href ng-click="download()">Download</a><br /> -->
+  <button ng-click="download()">
+    <strong>Download</strong>
+  </button>
+  
 </body>
 
 </html>

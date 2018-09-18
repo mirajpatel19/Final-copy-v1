@@ -25,23 +25,47 @@ app.controller('payRollCtrl', function ($scope, $http) {
     var fridayCounter = 1;
     var thirdFriday;
     while (dayOfMonth < lastDay.getDate()) {
-      var newDate = new Date(date.getFullYear(), date.getMonth(), dayOfMonth);
-      if (newDate.getDay() == 5) {
-        //console.log(" ");
-        // console.log(newDate);
-        // console.log('ITS FRIDAY........');
-        //console.log(" ");
-        if (fridayCounter == 3) {
-          //console.log('Its third friday of the month!!!!!!');
-          thirdFriday = newDate;
-          //console.log('Here is the date for it: ' + thirdFriday);
+        var newDate = new Date(date.getFullYear(), date.getMonth(), dayOfMonth);
+        if (newDate.getDay() == 5) {
+            //console.log(" ");
+            // console.log(newDate);
+            // console.log('ITS FRIDAY........');
+            //console.log(" ");
+            if (fridayCounter == 3) {
+                //console.log('Its third friday of the month!!!!!!');
+                thirdFriday = newDate;
+                //console.log('Here is the date for it: ' + thirdFriday);
+            }
+            var fridayCounter = fridayCounter + 1;
         }
-        var fridayCounter = fridayCounter + 1;
-      }
-      dayOfMonth = dayOfMonth + 1;
+        dayOfMonth = dayOfMonth + 1;
     }
     console.log("3rd friday: " + thirdFriday);
     //var test = new Date(date.getFullYear(), date.getMonth(), 6);
     //document.getElementById("saledate").valueAsDate = thirdFriday;
     $scope.myDate = thirdFriday;
+
+
+
+
+    let csvContent = "data:text/csv;charset=utf-8,";
+
+    $scope.download = function () {
+        console.log('on download side');
+        // csvContent += "Employee Number, First Name, Last Name, Total Pounds, Total Amount, Employment Type, Pick Up Status\r\n";
+        // $scope.orders.forEach((item, i) => {
+        //     console.log($scope.orders[id])
+        //     csvContent += orders.id + ',' + orders.fname + ',' + orders.lname + ',' + orders.pounds + ',' + orders.price + ',' + orders.emptype + ',' + orders.pickupstatus + "\r\n";
+        // });
+        // var link = document.createElement('a');
+        // if (typeof link.download === 'string') {
+        //     document.body.appendChild(link); // Firefox requires the link to be in the body
+        //     link.download = $scope.resp + "Pay Roll";
+        //     link.href = encodeURI(csvContent);
+        //     link.click();
+        //     document.body.removeChild(link); // remove the link when done
+        // } else {
+        //     location.replace(uri);
+        // }
+    }
 });

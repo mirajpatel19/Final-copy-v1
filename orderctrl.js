@@ -1,16 +1,17 @@
 app.controller('orderCtrl', function ($scope, $http) {
     $scope.date = ' ';
-    
+
     // $scope.value = {
     //     value : 'YES'
     //   };    // $scope.filter = myService.style();
-    $scope.pickUpFunc= function (key, value) {
+    $scope.pickUpFunc = function (key, value) {
         console.log('Key:', key, 'Value:', value);
         console.log('one clicked');
         $http.post('/pickupstatus', {
             'id': value
         })
     }
+    
     $scope.send = function () {
         console.log("inside send function with date: ");
         console.log($scope.myDate);

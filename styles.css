@@ -346,3 +346,8 @@ select {
 #filter input {
   width: 30%;
 }
+
+#addForm {
+  //background-color: red;
+  text-align: center;
+}

@@ -35,20 +35,20 @@ app.controller('pickListCtrl', function ($scope, $http) {
     var fridayCounter = 1;
     var thirdFriday;
     while (dayOfMonth < lastDay.getDate()) {
-      var newDate = new Date(date.getFullYear(), date.getMonth(), dayOfMonth);
-      if (newDate.getDay() == 5) {
-        //console.log(" ");
-        // console.log(newDate);
-        // console.log('ITS FRIDAY........');
-        //console.log(" ");
-        if (fridayCounter == 3) {
-          //console.log('Its third friday of the month!!!!!!');
-          thirdFriday = newDate;
-          //console.log('Here is the date for it: ' + thirdFriday);
+        var newDate = new Date(date.getFullYear(), date.getMonth(), dayOfMonth);
+        if (newDate.getDay() == 5) {
+            //console.log(" ");
+            // console.log(newDate);
+            // console.log('ITS FRIDAY........');
+            //console.log(" ");
+            if (fridayCounter == 3) {
+                //console.log('Its third friday of the month!!!!!!');
+                thirdFriday = newDate;
+                //console.log('Here is the date for it: ' + thirdFriday);
+            }
+            var fridayCounter = fridayCounter + 1;
         }
-        var fridayCounter = fridayCounter + 1;
-      }
-      dayOfMonth = dayOfMonth + 1;
+        dayOfMonth = dayOfMonth + 1;
     }
     console.log("3rd friday: " + thirdFriday);
     //var test = new Date(date.getFullYear(), date.getMonth(), 6);
