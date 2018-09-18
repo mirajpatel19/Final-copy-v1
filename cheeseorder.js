@@ -9,7 +9,9 @@ var app = express();
 var http = require('http');
 
 // DB connect String
-var connectionString = "postgres://postgres:1114@localhost:5432/cheeseordersdb";
+var connectionString = "postgres://postgres:1114@localhost:5432/testdb";
+//var connectionString = "postgres://postgres:pmoore:Passw0rd@10.4.1.48:5432/cheeseorders";
+
 const client = new pg.Client(connectionString);
 
 app.get('/', function (req, res) {
@@ -807,9 +809,24 @@ app.post('/pickupstatus', function (req, res) {
   console.log('Into pickupstatus in the server side with value: ');
   console.log(req.body.id);
 
-  client.query("update orders set pickupstatus='Yes' where id=$1", [req.body.id], function (err, result, fields) {
+  client.query("select * from orders where id=$1", [req.body.id], function (err, result, fields) {
     if (err) {
       throw err;
+    }
+    console.log(result.rows[0].pickupstatus);
+
+    if (result.rows[0].pickupstatus == null) {
+      client.query("update orders set pickupstatus='Yes' where id=$1", [req.body.id], function (err, result, fields) {
+        if (err) {
+          throw err;
+        }
+      });
+    } else {
+      client.query("update orders set pickupstatus= null where id=$1", [req.body.id], function (err, result, fields) {
+        if (err) {
+          throw err;
+        }
+      });
     }
   });
 });

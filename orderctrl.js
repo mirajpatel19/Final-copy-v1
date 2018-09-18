@@ -11,7 +11,7 @@ app.controller('orderCtrl', function ($scope, $http) {
             'id': value
         })
     }
-    
+
     $scope.send = function () {
         console.log("inside send function with date: ");
         console.log($scope.myDate);

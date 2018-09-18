@@ -83,8 +83,8 @@
         <td>{{value.qty}}</td>
         <td>{{value.pounds}}</td>
         <!-- <td>{{value.pickupstatus}}</td> -->
-        <td ng-click='pickUpFunc(key, value.id)'>
-          <input type="checkbox" ng-model="value.check" ng-checked="value.pickupstatus == 'Yes'">
+        <td>
+          <input type="checkbox" ng-click='pickUpFunc(key, value.id)' ng-model="value.check" ng-checked="value.pickupstatus == 'Yes'">
         </td>
         <td>{{value.orderdate}}</td>
         <td ng-click='deleteFunc(value.id, key)'>

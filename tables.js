@@ -1,5 +1,5 @@
 const pg = require('pg');
-var connectionString = "postgres://postgres:1114@localhost:5432/cheeseordersdb";
+var connectionString = "postgres://postgres:pmoore:Passw0rd@10.4.1.48:5432/cheeseorders";
 const client = new pg.Client(connectionString);
 client.connect();
 
