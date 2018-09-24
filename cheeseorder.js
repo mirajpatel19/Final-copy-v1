@@ -9,8 +9,8 @@ var app = express();
 var http = require('http');
 
 // DB connect String
-var connectionString = "postgres://postgres:1114@localhost:5432/testdb";
-//var connectionString = "postgres://postgres:pmoore:Passw0rd@10.4.1.48:5432/cheeseorders";
+//var connectionString = "postgres://postgres:1114@localhost:5432/testdb";
+var connectionString = "postgres://pmoore:Passw0rd@10.4.1.48:5432/cheeseorders";
 
 const client = new pg.Client(connectionString);
 
@@ -18,7 +18,7 @@ app.get('/', function (req, res) {
   res.set({
     'Access-Control-Allow-Origin': '*'
   });
-  return res.redirect('/index.html')
+  return res.redirect('/home.html')
 }).listen(8888);
 console.log('Server is listening at 8888');
 
